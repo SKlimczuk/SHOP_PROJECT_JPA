@@ -1,4 +1,7 @@
 package com.app.dao.producerDao;
 
-public interface ProducerDao {
+import com.app.dao.genericDao.GenericDao;
+import com.app.model.Producer;
+
+public interface ProducerDao extends GenericDao<Producer> {
 }

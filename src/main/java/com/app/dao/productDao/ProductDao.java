@@ -1,4 +1,7 @@
 package com.app.dao.productDao;
 
-public interface ProductDao {
+import com.app.dao.genericDao.GenericDao;
+import com.app.model.Product;
+
+public interface ProductDao extends GenericDao<Product>{
 }

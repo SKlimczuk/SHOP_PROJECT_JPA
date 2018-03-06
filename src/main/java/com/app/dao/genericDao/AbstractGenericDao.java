@@ -12,90 +12,87 @@ import java.util.Optional;
 public class AbstractGenericDao<T> implements GenericDao<T> {
     private final Class<T> entityClass;
     private EntityManagerFactory entityManagerFactory = DbConnection.getInstance().getEntityManagerFactory();
-    private EntityManager entityManager = DbConnection.getInstance().getEntityManager();
-    private EntityTransaction entityTransaction = DbConnection.getInstance().getEntityTransaction();
+
 
 
     public AbstractGenericDao() {
         this.entityClass
-                = (Class<T>)((ParameterizedType)this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+                = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    protected EntityManagerFactory getEntityManagerFactory() {
+        return entityManagerFactory;
     }
 
     @Override
     public void add(T t) {
-        try
-        {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        try {
             entityTransaction.begin();
 
             entityManager.persist(t);
 
             entityTransaction.commit();
-        }
-        catch (Exception e)
-        {
-            if(entityTransaction != null)
+        } catch (Exception e) {
+            if (entityTransaction != null)
                 entityTransaction.rollback();
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             entityManager.close();
         }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
     }
 
     @Override
     public void update(T t) {
-        try
-        {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        try {
             entityTransaction.begin();
 
-            //entityManager.find(t.getClass(),)
+            entityManager.merge(t);
 
             entityTransaction.commit();
-        }
-        catch (Exception e)
-        {
-            if(entityTransaction != null)
+        } catch (Exception e) {
+            if (entityTransaction != null)
                 entityTransaction.rollback();
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             entityManager.close();
         }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
     }
 
     @Override
     public void delete(Long id) {
-        try
-        {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        try {
             entityTransaction.begin();
 
-            //T t = entityManager.find();
-            //entityManager.remove(t);
+            T t = entityManager.find(entityClass, id);
+            entityManager.remove(t);
 
             entityTransaction.commit();
-        }
-        catch (Exception e)
-        {
-        if(entityTransaction != null)
-            entityTransaction.rollback();
-        e.printStackTrace();
-        }
-        finally {
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        } finally {
             entityManager.close();
         }
+    }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
-        }
 
     @Override
     public Optional<T> getOne(Long id) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
         if(id != null)
             try
             {
@@ -115,13 +112,15 @@ public class AbstractGenericDao<T> implements GenericDao<T> {
                 entityManager.close();
             }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
+
         return Optional.empty();
     }
 
     @Override
     public List<T> getAll() {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
         try
         {
             entityTransaction.begin();
@@ -140,8 +139,7 @@ public class AbstractGenericDao<T> implements GenericDao<T> {
             entityManager.close();
         }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
+
         return null;
     }
 

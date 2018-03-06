@@ -16,15 +16,12 @@ public class DbConnection {
         return entityManagerFactory;
     }
 
-    private EntityManager entityManager = entityManagerFactory.createEntityManager();
-    public EntityManager getEntityManager() {
-        return entityManager;
+    public void close()
+    {
+        if (entityManagerFactory != null)
+        {
+            entityManagerFactory.close();
+        }
     }
-
-    private EntityTransaction entityTransaction = entityManager.getTransaction();
-    public EntityTransaction getEntityTransaction() {
-        return entityTransaction;
-    }
-
     private DbConnection() { }
 }

@@ -1,5 +1,6 @@
 package com.app;
 
+import com.app.dao.DbConnection;
 import com.app.dao.categoryDao.CategoryDao;
 import com.app.dao.categoryDao.CategoryDaoImpl;
 import com.app.model.Category;
@@ -17,17 +18,20 @@ public class App
 {
     public static void main( String[] args ) {
         //---------------------1st of testing generic dao
-        //CategoryDao categoryDao = new CategoryDaoImpl();
+        CategoryDao categoryDao = new CategoryDaoImpl();
         //Category category = new Category("toy");
 
         //add operation success
         //categoryDao.add(category);
 
         //update operation fail
-        //categoryDao.update(category);
-
+       /* Category category = categoryDao.getOne(2L).orElseThrow(NullPointerException::new);
+        System.out.println(category);
+        category.setName("spozywcze");
+        categoryDao.update(category);
+*/
         //delete operation success
-        //categoryDao.delete(1L);
+        categoryDao.delete(2L);
 
         //get one operation success
         //System.out.println(categoryDao.getOne(2L));
@@ -35,5 +39,7 @@ public class App
         //get all operation success
         //System.out.println(categoryDao.getAll());
         //---------------------
+
+        DbConnection.getInstance().close();
     }
 }

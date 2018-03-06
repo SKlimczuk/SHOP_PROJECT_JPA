@@ -1,4 +1,7 @@
 package com.app.dao.tradeDao;
 
-public interface TradeDao {
+import com.app.dao.genericDao.GenericDao;
+import com.app.model.Trade;
+
+public interface TradeDao extends GenericDao<Trade> {
 }

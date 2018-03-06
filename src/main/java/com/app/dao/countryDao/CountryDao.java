@@ -1,4 +1,7 @@
 package com.app.dao.countryDao;
 
-public interface CountryDao {
+import com.app.dao.genericDao.GenericDao;
+import com.app.model.Country;
+
+public interface CountryDao extends GenericDao<Country> {
 }

@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class CategoryDaoImpl extends AbstractGenericDao<Category> implements CategoryDao {
-    private EntityManagerFactory entityManagerFactory = DbConnection.getInstance().getEntityManagerFactory();
-    private EntityManager entityManager = DbConnection.getInstance().getEntityManager();
-    private EntityTransaction entityTransaction = DbConnection.getInstance().getEntityTransaction();
+    private EntityManagerFactory entityManagerFactory = getEntityManagerFactory();
 
-    @Override
+   /* @Override
     public void delete(Long id)
     {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
         try
         {
             entityTransaction.begin();
@@ -39,17 +39,18 @@ public class CategoryDaoImpl extends AbstractGenericDao<Category> implements Cat
             entityManager.close();
         }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void update(Category category)
     {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
         try
         {
             entityTransaction.begin();
 
+            entityManager.merge(category);
 
             entityTransaction.commit();
         }
@@ -63,13 +64,14 @@ public class CategoryDaoImpl extends AbstractGenericDao<Category> implements Cat
             entityManager.close();
         }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
-    }
+    }*/
 
     @Override
     public Optional<Category> getOne(Long id)
     {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
         Optional<Category> categoryOptional = null;
         try
         {
@@ -90,14 +92,15 @@ public class CategoryDaoImpl extends AbstractGenericDao<Category> implements Cat
             entityManager.close();
         }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
         return categoryOptional;
     }
 
     @Override
     public List<Category> getAll()
     {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
         List<Category> categories = new LinkedList<>();
 
         try
@@ -119,8 +122,6 @@ public class CategoryDaoImpl extends AbstractGenericDao<Category> implements Cat
             entityManager.close();
         }
 
-        if(entityManagerFactory != null)
-            entityManagerFactory.close();
         return categories;
     }
 }
