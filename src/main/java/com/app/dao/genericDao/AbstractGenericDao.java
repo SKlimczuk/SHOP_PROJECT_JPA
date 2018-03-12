@@ -5,7 +5,9 @@ import com.app.dao.DbConnection;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,120 +28,124 @@ public class AbstractGenericDao<T> implements GenericDao<T> {
 
     @Override
     public void add(T t) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
+        if(entityManagerFactory != null && t != null) {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityTransaction entityTransaction = entityManager.getTransaction();
 
-        try {
-            entityTransaction.begin();
+            try {
+                entityTransaction.begin();
 
-            entityManager.persist(t);
+                entityManager.persist(t);
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
+                entityTransaction.commit();
+            } catch (Exception e) {
+                if (entityTransaction != null)
+                    entityTransaction.rollback();
+                e.printStackTrace();
+            } finally {
+                entityManager.close();
+            }
         }
-
     }
 
     @Override
     public void update(T t) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
+        if(entityManagerFactory != null && t != null) {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityTransaction entityTransaction = entityManager.getTransaction();
 
-        try {
-            entityTransaction.begin();
+            try {
+                entityTransaction.begin();
 
-            entityManager.merge(t);
+                entityManager.merge(t);
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
+                entityTransaction.commit();
+            } catch (Exception e) {
+                if (entityTransaction != null)
+                    entityTransaction.rollback();
+                e.printStackTrace();
+            } finally {
+                entityManager.close();
+            }
         }
-
     }
 
     @Override
     public void delete(Long id) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
+        if(entityManagerFactory != null && id != null) {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityTransaction entityTransaction = entityManager.getTransaction();
 
-        try {
-            entityTransaction.begin();
+            try {
+                entityTransaction.begin();
 
-            T t = entityManager.find(entityClass, id);
-            entityManager.remove(t);
+                T t = entityManager.find(entityClass, id);
+                entityManager.remove(t);
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
+                entityTransaction.commit();
+            } catch (Exception e) {
+                if (entityTransaction != null)
+                    entityTransaction.rollback();
+                e.printStackTrace();
+            } finally {
+                entityManager.close();
+            }
         }
     }
 
 
     @Override
     public Optional<T> getOne(Long id) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
+        if(entityManagerFactory != null && id != null) {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityTransaction entityTransaction = entityManager.getTransaction();
 
-        if(id != null)
-            try
-            {
-                entityTransaction.begin();
+            Optional<T> tOptional = null;
 
-                //Query query = entityManager.createQuery("select t from T t where t.id = :id");
+            if (id != null)
+                try {
+                    entityTransaction.begin();
 
-                entityTransaction.commit();
-            }
-            catch (Exception e)
-            {
-                if(entityTransaction != null)
-                    entityTransaction.rollback();
-                e.printStackTrace();
-            }
-            finally {
-                entityManager.close();
-            }
+                    T t = entityManager.find(entityClass, id);
+                    tOptional = Optional.ofNullable(t);
 
-
-        return Optional.empty();
+                    entityTransaction.commit();
+                } catch (Exception e) {
+                    if (entityTransaction != null)
+                        entityTransaction.rollback();
+                    e.printStackTrace();
+                } finally {
+                    entityManager.close();
+                }
+            return tOptional;
+        }
+        return null;
     }
 
     @Override
     public List<T> getAll() {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
+        if(entityManagerFactory != null) {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityTransaction entityTransaction = entityManager.getTransaction();
 
-        try
-        {
-            entityTransaction.begin();
+            List<T> tList = new LinkedList<>();
 
-            //Query query = entityManager.createQuery("select t from T t");
+            try {
+                entityTransaction.begin();
 
-            entityTransaction.commit();
+                Query query = entityManager.createQuery("select from " + entityClass);
+                tList = query.getResultList();
+
+                entityTransaction.commit();
+            } catch (Exception e) {
+                if (entityTransaction != null)
+                    entityTransaction.rollback();
+                e.printStackTrace();
+            } finally {
+                entityManager.close();
+            }
+            return tList;
         }
-        catch (Exception e)
-        {
-            if(entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-        finally {
-            entityManager.close();
-        }
-
-
         return null;
     }
 

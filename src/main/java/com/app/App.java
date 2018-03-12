@@ -31,13 +31,13 @@ public class App
         categoryDao.update(category);
 */
         //delete operation success
-        categoryDao.delete(2L);
+        //categoryDao.delete(2L);
 
         //get one operation success
         //System.out.println(categoryDao.getOne(2L));
 
         //get all operation success
-        //System.out.println(categoryDao.getAll());
+        System.out.println(categoryDao.getAll());
         //---------------------
 
         DbConnection.getInstance().close();
