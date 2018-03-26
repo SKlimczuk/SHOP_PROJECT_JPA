@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class AbstractGenericDao<T> implements GenericDao<T> {
     private final Class<T> entityClass;
-    private EntityManagerFactory entityManagerFactory = DbConnection.getInstance().getEntityManagerFactory();
+    protected EntityManagerFactory entityManagerFactory = DbConnection.getInstance().getEntityManagerFactory();
 
 
 
@@ -102,21 +102,56 @@ public class AbstractGenericDao<T> implements GenericDao<T> {
 
             Optional<T> tOptional = null;
 
-            if (id != null)
-                try {
-                    entityTransaction.begin();
+            try {
+                entityTransaction.begin();
 
-                    T t = entityManager.find(entityClass, id);
-                    tOptional = Optional.ofNullable(t);
+                T t = entityManager.find(entityClass, id);
+                tOptional = Optional.ofNullable(t);
 
-                    entityTransaction.commit();
-                } catch (Exception e) {
-                    if (entityTransaction != null)
-                        entityTransaction.rollback();
-                    e.printStackTrace();
-                } finally {
-                    entityManager.close();
-                }
+                entityTransaction.commit();
+            } catch (Exception e) {
+                if (entityTransaction != null)
+                    entityTransaction.rollback();
+                e.printStackTrace();
+            } finally {
+                entityManager.close();
+            }
+            return tOptional;
+        }
+        return null;
+    }
+
+    @Override
+    public Optional<T> getByNameSurnameCountry(String name, String surname, Long countryId) {
+        if(entityManagerFactory != null && name != null && surname !=null && countryId != null)
+        {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            EntityTransaction entityTransaction = entityManager.getTransaction();
+
+            Optional<T> tOptional = null;
+
+            try {
+                entityTransaction.begin();
+
+                Query query = entityManager.createQuery("select t from " + entityClass.getCanonicalName() + " t " +
+                        "where t.name = :name and t.surname = :surname and t.country_id = :country");
+                query.setParameter("name", "name");
+                query.setParameter("surname", "name");
+                query.setParameter("country_id", "countryId");
+                T t = (T) query.getSingleResult();
+                tOptional = Optional.ofNullable(t);
+
+                entityTransaction.commit();
+            }
+            catch (Exception e)
+            {
+                if (entityManager != null)
+                    entityTransaction.rollback();
+                e.printStackTrace();
+            }
+            finally {
+                entityManager.close();
+            }
             return tOptional;
         }
         return null;
@@ -133,7 +168,7 @@ public class AbstractGenericDao<T> implements GenericDao<T> {
             try {
                 entityTransaction.begin();
 
-                Query query = entityManager.createQuery("select from " + entityClass);
+                Query query = entityManager.createQuery("select t from " + entityClass.getCanonicalName() + " t");
                 tList = query.getResultList();
 
                 entityTransaction.commit();

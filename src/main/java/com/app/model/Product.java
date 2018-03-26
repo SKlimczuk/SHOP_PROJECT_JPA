@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name","category_id","producer_id}"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

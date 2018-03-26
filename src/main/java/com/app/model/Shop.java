@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name","country_id"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
